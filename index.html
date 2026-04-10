@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>FitZone Elite Analytics Portal | Complete Solution</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a2a28 0%, #0d3d3a 100%);
+            min-height: 100vh;
+        }
+
+        /* ========== LOGIN SECTION - BEAUTIFUL VERSION ========== */
+        .login-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #0a2a28 0%, #0d3d3a 100%);
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 32px;
+            width: 100%;
+            max-width: 480px;
+            padding: 48px 40px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #1e7e6c, #0f5c4e);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 25px rgba(30,126,108,0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .logo-icon i {
+            font-size: 40px;
+            color: white;
+        }
+
+        .logo-section h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #1e2a2e;
+            margin-bottom: 8px;
+        }
+
+        .logo-section p {
+            color: #6c8a87;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .input-field {
+            margin-bottom: 24px;
+        }
+
+        .input-field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2c4a47;
+            margin-bottom: 8px;
+        }
+
+        .input-field input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1.5px solid #e0ecea;
+            border-radius: 16px;
+            font-size: 15px;
+            transition: all 0.2s;
+            background: #fafdfc;
+        }
+
+        .input-field input:focus {
+            outline: none;
+            border-color: #1e7e6c;
+            box-shadow: 0 0 0 3px rgba(30,126,108,0.1);
+            background: white;
+        }
+
+        .btn-signin {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #1e7e6c, #146b5a);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 12px;
+        }
+
+        .btn-signin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(30,126,108,0.3);
+        }
+
+        .demo-info {
+            text-align: center;
+            margin-top: 28px;
+            padding: 14px;
+            background: #f0f7f5;
+            border-radius: 16px;
+            font-size: 13px;
+            color: #5c7e7a;
+        }
+
+        .demo-info i {
+            margin-right: 6px;
+            color: #1e7e6c;
+        }
+
+        /* ========== DASHBOARD SECTION - SUPER VERSION ========== */
+        .dashboard-container {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            background: #f5faf9;
+        }
+
+        body.dark-mode .dashboard-container {
+            background: #121212;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: white;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        body.dark-mode .navbar {
+            background: #1e1e1e;
+            border-bottom: 1px solid #333;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-brand i {
+            font-size: 28px;
+            color: #1e7e6c;
+        }
+
+        .nav-brand span {
+            font-size: 22px;
+            font-weight: 800;
+            color: #1e2a2e;
+        }
+
+        body.dark-mode .nav-brand span {
+            color: #e0e0e0;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: #f0f7f5;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 13px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            background: #e0ecea;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f0f7f5;
+            padding: 8px 18px;
+            border-radius: 40px;
+        }
+
+        .user-badge i {
+            font-size: 18px;
+            color: #1e7e6c;
+        }
+
+        .logout-nav {
+            background: #ffebee;
+            border: none;
+            color: #c62828;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 40px;
+            transition: background 0.2s;
+        }
+
+        .logout-nav:hover {
+            background: #ffcdd2;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 32px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px 20px;
+            border-radius: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s;
+            border: 1px solid #e6f0ee;
+        }
+
+        body.dark-mode .stat-card {
+            background: #1e1e1e;
+            border-color: #333;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-title {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #6c8a87;
+            margin-bottom: 12px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: #1e3a38;
+        }
+
+        body.dark-mode .stat-value {
+            color: #48a999;
+        }
+
+        /* Filter Panel */
+        .filter-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            border: 1px solid #e6f0ee;
+        }
+
+        body.dark-mode .filter-panel {
+            background: #1e1e1e;
+            border-color: #333;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .filter-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6c8a87;
+        }
+
+        .filter-group input, .filter-group select {
+            padding: 10px 14px;
+            border: 1px solid #dcebe8;
+            border-radius: 12px;
+            font-size: 13px;
+            background: white;
+        }
+
+        body.dark-mode .filter-group input, 
+        body.dark-mode .filter-group select {
+            background: #2d2d2d;
+            border-color: #444;
+            color: #e0e0e0;
+        }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 20px;
+            border-radius: 24px;
+            border: 1px solid #e6f0ee;
+        }
+
+        body.dark-mode .chart-card {
+            background: #1e1e1e;
+            border-color: #333;
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e3a38;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        body.dark-mode .chart-title {
+            color: #e0e0e0;
+        }
+
+        .chart-title i {
+            color: #1e7e6c;
+        }
+
+        canvas {
+            max-height: 260px;
+            width: 100%;
+        }
+
+        /* Alert Bar */
+        .alert-bar {
+            background: linear-gradient(135deg, #fff9e6, #fff3d6);
+            border-left: 4px solid #ff9800;
+            padding: 16px 24px;
+            border-radius: 16px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        body.dark-mode .alert-bar {
+            background: #2a2416;
+            border-left-color: #ff9800;
+        }
+
+        .alert-bar i {
+            font-size: 22px;
+            color: #ff9800;
+        }
+
+        .alert-bar span {
+            font-size: 14px;
+            color: #5d4a1a;
+        }
+
+        body.dark-mode .alert-bar span {
+            color: #ffcc80;
+        }
+
+        /* Member Table */
+        .table-container {
+            background: white;
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 32px;
+            border: 1px solid #e6f0ee;
+            overflow-x: auto;
+        }
+
+        body.dark-mode .table-container {
+            background: #1e1e1e;
+            border-color: #333;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .table-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e3a38;
+        }
+
+        body.dark-mode .table-header h3 {
+            color: #e0e0e0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px 12px;
+            text-align: left;
+            border-bottom: 1px solid #edf3f1;
+        }
+
+        body.dark-mode th, 
+        body.dark-mode td {
+            border-bottom-color: #333;
+            color: #d0d0d0;
+        }
+
+        th {
+            background: #f8fcfb;
+            font-weight: 600;
+            font-size: 13px;
+            color: #4a6e6a;
+        }
+
+        body.dark-mode th {
+            background: #2a2a2a;
+            color: #aaa;
+        }
+
+        tr:hover {
+            background: #fafdfc;
+            cursor: pointer;
+        }
+
+        body.dark-mode tr:hover {
+            background: #2a2a2a;
+        }
+
+        .risk-badge {
+            background: #ffebee;
+            color: #c62828;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .active-badge {
+            background: #e0f2f1;
+            color: #00695c;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Iframe */
+        .iframe-wrapper {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid #e6f0ee;
+        }
+
+        body.dark-mode .iframe-wrapper {
+            background: #1e1e1e;
+            border-color: #333;
+        }
+
+        iframe {
+            width: 100%;
+            height: 480px;
+            border: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 24px;
+            font-size: 12px;
+            color: #8aaba7;
+        }
+
+        @media (max-width: 1024px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .charts-grid { grid-template-columns: 1fr; }
+            .main-content { padding: 20px; }
+        }
+
+        @media (max-width: 640px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .navbar { flex-direction: column; }
+            .nav-actions { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- BEAUTIFUL LOGIN PAGE -->
+<div class="login-wrapper" id="loginWrapper">
+    <div class="login-card">
+        <div class="logo-section">
+            <div class="logo-icon">
+                <i class="fas fa-dumbbell"></i>
+            </div>
+            <h1>FitZone Portal</h1>
+            <p>Elite Analytics Suite</p>
+        </div>
+        <form id="loginForm">
+            <div class="input-field">
+                <label><i class="fas fa-envelope" style="margin-right: 6px;"></i> Email</label>
+                <input type="email" id="loginEmail" value="admin@fitzone.com" autocomplete="off">
+            </div>
+            <div class="input-field">
+                <label><i class="fas fa-lock" style="margin-right: 6px;"></i> Password</label>
+                <input type="password" id="loginPassword" value="fitzone2025">
+            </div>
+            <button type="submit" class="btn-signin">
+                <i class="fas fa-arrow-right-to-bracket" style="margin-right: 8px;"></i> Sign In
+            </button>
+        </form>
+        <div class="demo-info">
+            <i class="fas fa-chart-line"></i> demo: admin@fitzone.com / fitzone2025
+        </div>
+    </div>
+</div>
+
+<!-- SUPER DASHBOARD -->
+<div class="dashboard-container" id="dashboardContainer">
+    <div class="navbar">
+        <div class="nav-brand">
+            <i class="fas fa-heartbeat"></i>
+            <span>FitZone · INSIGHT HUB</span>
+        </div>
+        <div class="nav-actions">
+            <button class="action-btn" id="darkModeToggle"><i class="fas fa-moon"></i> Dark Mode</button>
+            <button class="action-btn" id="exportExcel"><i class="fas fa-file-excel"></i> Excel</button>
+            <button class="action-btn" id="exportPdf"><i class="fas fa-file-pdf"></i> PDF</button>
+            <div class="user-badge">
+                <i class="fas fa-user-circle"></i>
+                <span id="userName">Admin</span>
+            </div>
+            <button class="logout-nav" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Exit
+            </button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Stats Cards -->
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <!-- Filter Panel -->
+        <div class="filter-panel">
+            <div class="filter-group">
+                <label><i class="fas fa-search"></i> Search Member</label>
+                <input type="text" id="searchMember" placeholder="ID or Name...">
+            </div>
+            <div class="filter-group">
+                <label><i class="fas fa-city"></i> City</label>
+                <select id="cityFilter">
+                    <option value="">All Cities</option>
+                    <option>Mumbai</option><option>Delhi</option><option>Bengaluru</option>
+                    <option>Hyderabad</option><option>Chennai</option><option>Kolkata</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label><i class="fas fa-tag"></i> Membership</label>
+                <select id="membershipFilter">
+                    <option value="">All Types</option>
+                    <option>Basic</option><option>Premium</option><option>Elite</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label><i class="fas fa-exclamation-triangle"></i> Risk Status</label>
+                <select id="riskFilter">
+                    <option value="">All</option>
+                    <option value="high">High Risk</option>
+                    <option value="active">Active Only</option>
+                </select>
+            </div>
+            <button id="resetFilters" class="action-btn" style="background:#e0ecea;"><i class="fas fa-undo-alt"></i> Reset</button>
+        </div>
+
+        <!-- Alert Bar -->
+        <div class="alert-bar" id="alertBar">
+            <i class="fas fa-bell"></i>
+            <span id="alertMessage">Loading insights...</span>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-title"><i class="fas fa-chart-pie"></i> Membership Distribution</div>
+                <canvas id="membershipChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title"><i class="fas fa-city"></i> Members by City</div>
+                <canvas id="cityChart"></canvas>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-title"><i class="fas fa-star"></i> Trainer Satisfaction</div>
+                <canvas id="trainerChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title"><i class="fas fa-chart-line"></i> Monthly Revenue Trend</div>
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Member Table -->
+        <div class="table-container">
+            <div class="table-header">
+                <h3><i class="fas fa-users"></i> Member Directory <span style="font-size:12px; font-weight:normal;">(click row for profile)</span></h3>
+            </div>
+            <div style="overflow-x: auto;">
+                <table id="memberTable">
+                    <thead>
+                        <tr><th>Member ID</th><th>Name</th><th>City</th><th>Membership</th><th>Satisfaction</th><th>Status</th><th>Trainer</th></tr>
+                    </thead>
+                    <tbody id="memberTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- IBM Cognos Iframe -->
+        <div class="iframe-wrapper">
+            <iframe src="https://ap2.ca.analytics.ibm.com/bi/?perspective=story&amp;pathRef=.my_folders%2Fstory%2Bmaking%2Bproject&amp;closeWindowOnLastView=true&amp;ui_appbar=false&amp;ui_navbar=false&amp;shareMode=embedded&amp;action=view&amp;sceneId=model0000019d66a99f56_00000002&amp;sceneTime=5000&amp;nav_filter=true" title="Cognos Dashboard"></iframe>
+        </div>
+
+        <footer>© 2025 FitZone Fitness | Elite Analytics Platform | Real-time Member Intelligence</footer>
+    </div>
+</div>
+
+<script>
+    // ========== GENERATE FULL DATASET (200 Members) ==========
+    const fullMembers = [];
+    const citiesList = ['Mumbai', 'Delhi', 'Bengaluru', 'Hyderabad', 'Chennai', 'Kolkata'];
+    const membershipTypes = ['Basic', 'Premium', 'Elite'];
+    const trainersList = ['Trainer_Arjun', 'Trainer_Ravi', 'Trainer_Priya', 'Trainer_Kiran', 'Trainer_Sunita'];
+    
+    for (let i = 1; i <= 200; i++) {
+        let city = citiesList[Math.floor(Math.random() * citiesList.length)];
+        let membership = membershipTypes[Math.floor(Math.random() * 3)];
+        let trainer = trainersList[Math.floor(Math.random() * 5)];
+        let satisfaction = +(Math.random() * 3.5 + 1).toFixed(1);
+        let dropoutFlag = Math.random() > 0.7 ? "Yes" : "No";
+        let monthlyFee = membership === 'Basic' ? 999 : membership === 'Premium' ? 1999 : 3999;
+        let additionalRevenue = Math.random() * 10000;
+        
+        fullMembers.push({
+            id: `MEM${String(i).padStart(4, '0')}`,
+            name: `Member_${String(i).padStart(3, '0')}`,
+            city: city,
+            membership: membership,
+            satisfaction: satisfaction,
+            dropoutFlag: dropoutFlag,
+            trainer: trainer,
+            monthlyFee: monthlyFee,
+            additionalRevenue: additionalRevenue,
+            classesEnrolled: Math.floor(Math.random() * 5) + 1,
+            classesAttended: Math.floor(Math.random() * 20)
+        });
+    }
+    
+    // Realistic distribution
+    for (let i = 0; i < 55; i++) fullMembers[i].city = "Mumbai";
+    for (let i = 55; i < 105; i++) fullMembers[i].city = "Hyderabad";
+    
+    let currentFiltered = [...fullMembers];
+    
+    // Chart variables
+    let membershipChart, cityChart, trainerChart, revenueChart;
+    
+    // ========== UPDATE DASHBOARD ==========
+    function updateDashboard() {
+        let total = currentFiltered.length;
+        let active = currentFiltered.filter(m => m.dropoutFlag === "No").length;
+        let avgSat = (currentFiltered.reduce((a, b) => a + b.satisfaction, 0) / total).toFixed(1);
+        let totalRev = currentFiltered.reduce((s, m) => s + m.monthlyFee + (m.additionalRevenue || 0), 0);
+        
+        // Update Stats
+        document.getElementById('statsGrid').innerHTML = `
+            <div class="stat-card"><div class="stat-title"><i class="fas fa-users"></i> Total Members</div><div class="stat-value">${total}</div></div>
+            <div class="stat-card"><div class="stat-title"><i class="fas fa-user-check"></i> Active Members</div><div class="stat-value">${active}</div></div>
+            <div class="stat-card"><div class="stat-title"><i class="fas fa-star"></i> Avg Satisfaction</div><div class="stat-value">${avgSat} / 5</div></div>
+            <div class="stat-card"><div class="stat-title"><i class="fas fa-rupee-sign"></i> Total Revenue</div><div class="stat-value">₹${Math.round(totalRev).toLocaleString()}</div></div>
+        `;
+        
+        // Update Alert
+        let lowSat = currentFiltered.filter(m => m.satisfaction < 2).length;
+        let highRisk = currentFiltered.filter(m => m.dropoutFlag === "Yes" && m.satisfaction < 2.5).length;
+        document.getElementById('alertMessage').innerHTML = `⚠️ ${lowSat} members have low satisfaction (&lt;2) | 🔥 ${highRisk} members at high dropout risk | 🎉 ${currentFiltered.filter(m => m.satisfaction >= 4.5).length} happy promoters!`;
+        
+        // Membership Distribution
+        let memDist = { Basic: 0, Premium: 0, Elite: 0 };
+        currentFiltered.forEach(m => memDist[m.membership]++);
+        
+        // City Distribution
+        let cityDist = {};
+        currentFiltered.forEach(m => cityDist[m.city] = (cityDist[m.city] || 0) + 1);
+        
+        // Trainer Satisfaction
+        let trainerSat = {};
+        currentFiltered.forEach(m => {
+            if (!trainerSat[m.trainer]) trainerSat[m.trainer] = { sum: 0, count: 0 };
+            trainerSat[m.trainer].sum += m.satisfaction;
+            trainerSat[m.trainer].count++;
+        });
+        let trainerAvg = {};
+        for (let [k, v] of Object.entries(trainerSat)) {
+            trainerAvg[k] = (v.sum / v.count).toFixed(1);
+        }
+        
+        // Update Charts
+        if (membershipChart) membershipChart.destroy();
+        membershipChart = new Chart(document.getElementById('membershipChart'), {
+            type: 'doughnut',
+            data: { labels: ['Basic', 'Premium', 'Elite'], datasets: [{ data: [memDist.Basic, memDist.Premium, memDist.Elite], backgroundColor: ['#1e7e6c', '#48a999', '#80cbc4'] }] }
+        });
+        
+        if (cityChart) cityChart.destroy();
+        cityChart = new Chart(document.getElementById('cityChart'), {
+            type: 'bar',
+            data: { labels: Object.keys(cityDist), datasets: [{ label: 'Members', data: Object.values(cityDist), backgroundColor: '#1e7e6c', borderRadius: 8 }] }
+        });
+        
+        if (trainerChart) trainerChart.destroy();
+        trainerChart = new Chart(document.getElementById('trainerChart'), {
+            type: 'bar',
+            data: { labels: Object.keys(trainerAvg), datasets: [{ label: 'Avg Satisfaction', data: Object.values(trainerAvg), backgroundColor: '#ff9800' }] }
+        });
+        
+        if (revenueChart) revenueChart.destroy();
+        revenueChart = new Chart(document.getElementById('revenueChart'), {
+            type: 'line',
+            data: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], datasets: [{ label: 'Revenue (₹ Lakhs)', data: [12.4, 13.2, 14.5, 13.8, 15.2, 16.8], borderColor: '#1e7e6c', tension: 0.3, fill: true, backgroundColor: 'rgba(30,126,108,0.1)' }] }
+        });
+        
+        // Update Table
+        let tbody = document.getElementById('memberTableBody');
+        tbody.innerHTML = currentFiltered.slice(0, 50).map(m => `
+            <tr onclick="showMemberProfile('${m.id}')">
+                <td>${m.id}</td><td>${m.name}</td><td>${m.city}</td><td>${m.membership}</td>
+                <td>${m.satisfaction}</td>
+                <td>${m.dropoutFlag === 'Yes' ? '<span class="risk-badge">⚠️ High Risk</span>' : '<span class="active-badge">✅ Active</span>'}</td>
+                <td>${m.trainer}</td>
+            </tr>
+        `).join('');
+    }
+    
+    // Show Member Profile
+    window.showMemberProfile = function(id) {
+        let m = fullMembers.find(x => x.id === id);
+        alert(`🏋️ MEMBER PROFILE\n\n━━━━━━━━━━━━━━━━━━━━━\n📛 ID: ${m.id}\n👤 Name: ${m.name}\n📍 City: ${m.city}\n🏷️ Membership: ${m.membership}\n⭐ Satisfaction: ${m.satisfaction}/5\n🎯 Trainer: ${m.trainer}\n📊 Status: ${m.dropoutFlag === 'Yes' ? '⚠️ Dropout Risk' : '✅ Active Member'}\n💰 Monthly Fee: ₹${m.monthlyFee}\n━━━━━━━━━━━━━━━━━━━━━`);
+    };
+    
+    // Apply Filters
+    function applyFilters() {
+        let search = document.getElementById('searchMember').value.toLowerCase();
+        let city = document.getElementById('cityFilter').value;
+        let membership = document.getElementById('membershipFilter').value;
+        let risk = document.getElementById('riskFilter').value;
+        
+        currentFiltered = fullMembers.filter(m => {
+            if (search && !m.id.toLowerCase().includes(search) && !m.name.toLowerCase().includes(search)) return false;
+            if (city && m.city !== city) return false;
+            if (membership && m.membership !== membership) return false;
+            if (risk === 'high' && m.dropoutFlag !== 'Yes') return false;
+            if (risk === 'active' && m.dropoutFlag !== 'No') return false;
+            return true;
+        });
+        updateDashboard();
+    }
+    
+    // Reset Filters
+    function resetFilters() {
+        document.getElementById('searchMember').value = '';
+        document.getElementById('cityFilter').value = '';
+        document.getElementById('membershipFilter').value = '';
+        document.getElementById('riskFilter').value = '';
+        applyFilters();
+    }
+    
+    // Export Functions
+    function exportToExcel() {
+        let exportData = currentFiltered.map(m => ({
+            'Member ID': m.id, 'Name': m.name, 'City': m.city, 'Membership': m.membership,
+            'Satisfaction': m.satisfaction, 'Status': m.dropoutFlag, 'Trainer': m.trainer,
+            'Monthly Fee': m.monthlyFee, 'Additional Revenue': Math.round(m.additionalRevenue)
+        }));
+        let ws = XLSX.utils.json_to_sheet(exportData);
+        let wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'FitZone Members');
+        XLSX.writeFile(wb, `FitZone_Report_${new Date().toISOString().slice(0,19)}.xlsx`);
+    }
+    
+    function exportToPDF() {
+        let element = document.querySelector('.main-content');
+        html2pdf().from(element).set({ margin: 0.5, filename: `FitZone_Dashboard_${Date.now()}.pdf` }).save();
+    }
+    
+    // Dark Mode
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+    }
+    
+    // Check saved dark mode
+    if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+    }
+    
+    // Event Listeners
+    document.getElementById('searchMember').addEventListener('input', applyFilters);
+    document.getElementById('cityFilter').addEventListener('change', applyFilters);
+    document.getElementById('membershipFilter').addEventListener('change', applyFilters);
+    document.getElementById('riskFilter').addEventListener('change', applyFilters);
+    document.getElementById('resetFilters').addEventListener('click', resetFilters);
+    document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
+    document.getElementById('exportExcel').addEventListener('click', exportToExcel);
+    document.getElementById('exportPdf').addEventListener('click', exportToPDF);
+    
+    // Login Logic
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        let email = document.getElementById('loginEmail').value;
+        let pwd = document.getElementById('loginPassword').value;
+        if (email === 'admin@fitzone.com' && pwd === 'fitzone2025') {
+            document.getElementById('loginWrapper').style.display = 'none';
+            document.getElementById('dashboardContainer').style.display = 'block';
+            applyFilters();
+        } else {
+            alert('Invalid credentials!\nUse: admin@fitzone.com / fitzone2025');
+        }
+    });
+    
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        document.getElementById('dashboardContainer').style.display = 'none';
+        document.getElementById('loginWrapper').style.display = 'flex';
+    });
+    
+    // Initial load
+    applyFilters();
+</script>
+</body>
+</html>
